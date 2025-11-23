@@ -7,6 +7,11 @@ import logging
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
+# Set cache directory before importing sentence-transformers
+os.environ['HF_HOME'] = os.path.join(os.getcwd(), '.cache', 'huggingface')
+os.environ['TRANSFORMERS_CACHE'] = os.path.join(os.getcwd(), '.cache', 'huggingface')
+os.environ['SENTENCE_TRANSFORMERS_HOME'] = os.path.join(os.getcwd(), '.cache')
+
 from utils import safe_load_rubric
 from scoring import TranscriptScorer
 

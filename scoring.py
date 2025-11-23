@@ -4,7 +4,7 @@ Core scoring logic for evaluating transcripts against rubric criteria.
 import os
 import re
 import logging
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Optional
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -124,7 +124,7 @@ class TranscriptScorer:
         
         return float(score)
     
-    def compute_length_score(self, word_count: int, min_words: int = None, max_words: int = None) -> float:
+    def compute_length_score(self, word_count: int, min_words: Optional[int] = None, max_words: Optional[int] = None) -> float:
         """
         Compute length score based on word count constraints.
         
@@ -173,8 +173,8 @@ class TranscriptScorer:
                          keywords_expected: List[str],
                          keywords_found: List[str],
                          word_count: int,
-                         min_words: int = None,
-                         max_words: int = None) -> str:
+                         min_words: Optional[int] = None,
+                         max_words: Optional[int] = None) -> str:
         """
         Generate helpful, actionable feedback based on scores.
         
@@ -219,7 +219,7 @@ class TranscriptScorer:
         
         return "; ".join(feedback_parts) + "."
     
-    def score_transcript(self, transcript: str, config: Dict[str, float] = None) -> Dict[str, Any]:
+    def score_transcript(self, transcript: str, config: Optional[Dict[str, float]] = None) -> Dict[str, Any]:
         """
         Score a transcript against all rubric criteria.
         

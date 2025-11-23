@@ -5,7 +5,7 @@ import os
 import hashlib
 import logging
 import numpy as np
-from typing import List, Union
+from typing import List, Union, Optional
 from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
@@ -63,7 +63,7 @@ class Embedder:
     def _save_cache(self):
         """Save embeddings cache to disk."""
         try:
-            np.savez(self.embedding_cache_file, cache=self.embedding_cache)
+            np.savez(self.embedding_cache_file, cache=np.array(self.embedding_cache, dtype=object))
             logger.debug(f"Saved {len(self.embedding_cache)} embeddings to cache")
         except Exception as e:
             logger.warning(f"Failed to save cache: {e}")
@@ -124,6 +124,8 @@ class Embedder:
                 # Use deterministic embeddings for testing
                 new_embeddings = [self._deterministic_embedding(t) for t in texts_to_encode]
             else:
+                if self.model is None:
+                    raise RuntimeError("Model not initialized. Cannot encode texts.")
                 new_embeddings = self.model.encode(texts_to_encode, convert_to_numpy=True)
             
             # Update cache and results
@@ -148,7 +150,7 @@ class Embedder:
 _embedder = None
 
 
-def get_embedder(model_name: str = None) -> Embedder:
+def get_embedder(model_name: Optional[str] = None) -> Embedder:
     """Get or create global embedder instance."""
     global _embedder
     
